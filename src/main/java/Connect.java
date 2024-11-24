@@ -8,8 +8,46 @@ public class Connect {
     private String nameDataBase = "demo";
     private String host = "localhost";
     private int port = 8888;
-    private Connection con;
-    private Statement statement;
+    private Connection con =null;
+    private Statement statement=null;
+    private PreparedStatement preparedStatement=null;
+    public void getPrepairedEmployee(int id){
+        try {
+            String query="Select *From empployees where id>? and firstname like ? ";
+            preparedStatement=con.prepareStatement(query);
+            preparedStatement.setInt(1,id);
+            preparedStatement.setString(2,"M%");
+            ResultSet rs=preparedStatement.executeQuery();
+            while (rs.next()){
+                String firstname=rs.getString("firstname");
+                String lastname=rs.getString("lastname");
+                String email=rs.getString("email");
+                System.out.println("firstname:"+firstname+"lastname: "+lastname+"email:"+email);
+
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void preparedEmployees(){
+        try {
+            statement=con.createStatement();
+            String query="Select * From employees where firstname like 'M%'";
+            ResultSet rs=statement.executeQuery(query);
+            while (rs.next()){
+                System.out.println("Firsname:"+rs.getString("firstname"+"lastname:"+
+                        rs.getString("lastname")+"Email:"+
+                        rs.getString("email")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     public void deleteEmployee(){
         try {
@@ -41,6 +79,7 @@ public class Connect {
             String lastName = "Akkoyun";
             String email = "smh.2020@gmail.com";
             String query = "insert into employees (firsname,lastname,email) VALUES (" + "'" + fristName + "'," + lastName + "'," + email + ",)";
+
             statement.executeUpdate(query);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -97,6 +136,15 @@ public class Connect {
 
         connect.updateEmployee();
         connect.deleteEmployee();
+
+
+
+        //preparedStatement
+        connect.preparedEmployees();
+
+        connect.getPrepairedEmployee(3);
+
+
 
 
     }
