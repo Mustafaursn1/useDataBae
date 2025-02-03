@@ -1,17 +1,18 @@
 import java.sql.*;
+import java.util.Scanner;
 
 import static java.sql.DriverManager.getConnection;
 
-public class Connect {
-    private String userName = "root";
-    private String password = "";
-    private String nameDataBase = "demo";
-    private String host = "localhost";
-    private int port = 8888;
-    private Connection con =null;
-    private Statement statement=null;
-    private PreparedStatement preparedStatement=null;
-    public void getPrepairedEmployee(int id){
+public  class Connect {
+    private static String userName = "root";
+    private static String password = "";
+    private static String nameDataBase = "demo";
+    private static String host = "localhost";
+    private static int port = 8888;
+    private static Connection con =null;
+    private static Statement statement=null;
+    private static PreparedStatement preparedStatement=null;
+    public static void getPrepairedEmployee(int id){
         try {
             String query="Select *From empployees where id>? and firstname like ? ";
             preparedStatement=con.prepareStatement(query);
@@ -33,7 +34,7 @@ public class Connect {
 
     }
 
-    public void preparedEmployees(){
+    public static void preparedEmployees(){
         try {
             statement=con.createStatement();
             String query="Select * From employees where firstname like 'M%'";
@@ -49,7 +50,7 @@ public class Connect {
 
     }
 
-    public void deleteEmployee(){
+    public static void deleteEmployee(){
         try {
             statement=con.createStatement();
             String query="Delete from employees where id>3";
@@ -61,7 +62,7 @@ public class Connect {
 
     }
 
-    public void updateEmployee() {
+    public  static void updateEmployee() {
 
         try {
             statement= con.createStatement();
@@ -72,7 +73,7 @@ public class Connect {
         }
     }
 
-    public void addEmployee() {
+    public static void addEmployee() {
         try {
             statement = con.createStatement();
             String fristName = "Semih";
@@ -87,7 +88,38 @@ public class Connect {
 
     }
 
-    public void getEmployee() {
+    public static void commitAndRollback(){
+        Scanner scanner=new Scanner(System.in);
+        try {
+            con.setAutoCommit(false);
+            String sorgu1= "Delete From employees where id = 3";
+            String sorgu2= "Update employees  set email ='wetter@gmaail.com' where id = 1";
+            System.out.println("Güncellenmeden önce ");
+            getEmployee();
+            Statement statement=con.createStatement();
+            statement.executeUpdate(sorgu1);
+            statement.executeUpdate(sorgu2);
+            System.out.println("Islemleriniz kaydedilsin mi? (Yes/No)");
+            String cevap=scanner.nextLine();
+            if (cevap.equals("Yes")){
+                con.commit();
+                getEmployee();
+                System.out.println("Veri tabani güncellendi...");
+
+            }else {
+                con.rollback();
+                System.out.println("Veri tabani güncellemesi iptal edildi....");
+
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void getEmployee() {
         String query = "Select * from employees ";
         try {
             statement = con.createStatement();
@@ -109,7 +141,7 @@ public class Connect {
         }
     }
 
-    public Connect() {
+    public static void   Connect() {
 
         String url = "jdbc:mysql://" + host + ":" + port + "/" + nameDataBase;
         try {
@@ -128,21 +160,23 @@ public class Connect {
     }
 
     public static void main(String[] args) {
-        Connect connect = new Connect();
-        connect.getEmployee();
+       // Connect connect = new Connect();
+       // connect.getEmployee();
 
-        System.out.println("before.....");
-        connect.addEmployee();
+        //System.out.println("before.....");
+       // connect.addEmployee();
 
-        connect.updateEmployee();
-        connect.deleteEmployee();
+       // connect.updateEmployee();
+       // connect.deleteEmployee();
 
 
 
         //preparedStatement
-        connect.preparedEmployees();
+        //connect.preparedEmployees();
 
-        connect.getPrepairedEmployee(3);
+       // connect.getPrepairedEmployee(3);
+        //daha detayli aktarilacak
+        commitAndRollback();
 
 
 
